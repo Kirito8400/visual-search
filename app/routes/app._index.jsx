@@ -16,7 +16,7 @@ export default function Dashboard() {
         <CurrentPlan />
         <ProductStatus />
         <ReviewSection />
-        <Statistics/>
+        <Statistics />
       </BlockStack>
       <br />
       <br />

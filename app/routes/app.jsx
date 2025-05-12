@@ -22,6 +22,8 @@ export default function App() {
         <Link to="/app" rel="home">
           Home  
         </Link>
+        <Link to="/app/settings">Settings</Link>
+        <Link to="/app/plan">Plan</Link>
         <Link to="/app/additional">Additional page</Link>
         <Link to="/app/image-searcher-beta">image Searcher (Beta)</Link>
       </NavMenu>
