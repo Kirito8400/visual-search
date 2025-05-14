@@ -60,7 +60,7 @@ async function findSimilarProducts(base64Image, admin) {
   // 2. Fetch products from the store
   const productsResponse = await admin.graphql(`
     query {
-      products(first: 50) {
+      products(first: 100) {
         edges {
           node {
             id
@@ -90,77 +90,98 @@ async function findSimilarProducts(base64Image, admin) {
 
 // Extract features from the uploaded image
 async function extractImageFeatures(base64Image) {
-  // console.log("base64Image:", base64Image)
-  // In a real implementation, you would call the Vision API here
-  // For this example, we'll simulate the response
+  // Your PAT (Personal Access Token) can be found in the Account's Security section
+  const PAT = "879659753fb246799555f897a3e855ed";
+  // Specify the correct user_id/app_id pairings
+  // Since you're making inferences outside your app's scope
+  const USER_ID = "ereh000";
+  const APP_ID = "elrik0084";
+  // Change these to whatever model and image URL you want to use
+  // Change these to whatever model and text URL you want to use
+  const MODEL_ID = "gpt-4o";
+  const MODEL_VERSION_ID = "1cd39c6a109f4f0e94f1ac3fe233c207";
+  const IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
+  // const IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
 
-  try {
-    // Make the API call to Google Vision API
-    const response = await fetch(
-      "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD4W4nJ7j3Xa6XyTVXbrqaBCZtIcLQ84KA",
+  // Create a specific prompt asking for structured data
+  const prompt =
+    'Analyze this image and provide a JSON response with the following structure: {"labels": [list of keywords describing the image content], "colors": [list of dominant colors in hex code format], "objects": [list of distinct objects visible in the image]}. Be specific and concise.';
+
+  const raw = JSON.stringify({
+    user_app_id: {
+      user_id: USER_ID,
+      app_id: APP_ID,
+    },
+    inputs: [
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+        data: {
+          image: {
+            base64: base64Image,
+          },
+          text: {
+            raw: prompt,
+          },
         },
-        body: JSON.stringify({
-          requests: [
-            {
-              image: {
-                content: base64Image,
-              },
-              features: [
-                { type: "LABEL_DETECTION", maxResults: 10 },
-                { type: "OBJECT_LOCALIZATION", maxResults: 10 },
-                { type: "IMAGE_PROPERTIES", maxResults: 5 },
-              ],
-            },
-          ],
-        }),
       },
-    );
+    ],
+  });
 
-    // Check if the response is successful
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Vision API Error:", errorData);
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Key " + PAT,
+    },
+    body: raw,
+  };
 
-      // Fall back to mock data if API call fails
-      console.log("Using fallback mock data due to API error");
-      return getFallbackImageFeatures();
+  const response = await fetch(
+    "https://api.clarifai.com/v2/models/" +
+      MODEL_ID +
+      "/versions/" +
+      MODEL_VERSION_ID +
+      "/outputs",
+    requestOptions,
+  );
+  const result = await response.json();
+  console.log("result: ", result);
+  console.log("resultdata: ", result?.outputs[0]?.data);
+
+  // Extract the text response
+  const textResponse = result?.outputs[0]?.data?.text?.raw || "";
+
+  // Try to parse JSON from the response
+  try {
+    // Look for JSON-like structure in the response
+    const jsonMatch = textResponse?.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonStr = jsonMatch[0];
+      const parsedData = JSON.parse(jsonStr);
+      console.log("parsedData: ", parsedData);
+
+      // Validate and return the parsed data
+      return {
+        labels: Array.isArray(parsedData?.labels) ? parsedData?.labels : [],
+        colors: Array.isArray(parsedData?.colors)
+          ? parsedData?.colors
+          : ["#e3e3e3"],
+        objects: Array.isArray(parsedData?.objects) ? parsedData?.objects : [],
+        rawDescription: textResponse || "",
+      };
     }
 
-    const data = await response.json();
-    console.log("Vision API Response:", data);
+    // If JSON parsing fails, fall back to your existing text processing logic
+    // ... existing text processing code ...
 
-    // // Process the API response to extract relevant features
-    // const labels =
-    //   data.responses[0].labelAnnotations?.map((label) => label.description) ||
-    //   [];
-    // const objects =
-    //   data.responses[0].localizedObjectAnnotations?.map((obj) => obj.name) ||
-    //   [];
-
-    // // Extract dominant colors
-    // const colors =
-    //   data.responses[0].imagePropertiesAnnotation?.dominantColors?.colors?.map(
-    //     (color) => {
-    //       const { red, green, blue } = color.color;
-    //       return rgbToHex(red, green, blue);
-    //     },
-    //   ) || [];
-
-    // Simulate the response with mock data
-    return {
-      labels: ["clothing", "apparel", "shirt", "fashion", "blue", "cotton"],
-      colors: ["#2a4d69", "#4b86b4", "#adcbe3", "#e7eff6"],
-      objects: ["shirt", "button", "collar"],
-    //   labels,
-    //   colors,
-    //   objects
-    };
+    // For now, return placeholder data
+    // return {
+    //   labels: ["clothing", "apparel", "shirt", "fashion", "blue", "cotton"],
+    //   colors: ["#2a4d69", "#4b86b4", "#adcbe3", "#e7eff6"],
+    //   objects: ["shirt", "button", "collar"],
+    // };
   } catch (error) {
-    console.error("Error in extractImageFeatures:", error);
+    console.error("Error:", error);
+    return json({ error: "Failed to fetch data" }, { status: 500 });
   }
 }
 

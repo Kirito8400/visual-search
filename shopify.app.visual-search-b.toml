@@ -3,7 +3,7 @@
 client_id = "bccd4eff33005ba9881ed243e7af66d3"
 name = "Visual Search - B"
 handle = "visual-search-b"
-application_url = "https://minute-ted-widely-returned.trycloudflare.com"
+application_url = "https://legislation-linux-digest-cash.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://minute-ted-widely-returned.trycloudflare.com/auth/callback",
-  "https://minute-ted-widely-returned.trycloudflare.com/auth/shopify/callback",
-  "https://minute-ted-widely-returned.trycloudflare.com/api/auth/callback"
+  "https://legislation-linux-digest-cash.trycloudflare.com/auth/callback",
+  "https://legislation-linux-digest-cash.trycloudflare.com/auth/shopify/callback",
+  "https://legislation-linux-digest-cash.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
