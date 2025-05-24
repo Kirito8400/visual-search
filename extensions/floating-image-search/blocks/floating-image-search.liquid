@@ -1,0 +1,382 @@
+<section class="vs-image-search-float">
+  <button class="vs-image-search-button" id="vs-image-search-button" aria-label="Search by image">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+      <polyline points="21 15 16 10 5 21"></polyline>
+      <line x1="16" y1="16" x2="20" y2="20"></line>
+    </svg>
+    <span class="vs-image-search-plus">+</span>
+  </button>
+
+  <div class="vs-image-search-modal" id="vs-image-search-modal">
+    <div class="vs-image-search-modal-content">
+      <div class="vs-image-search-modal-header">
+        <h2>Image Search</h2>
+        <button class="vs-image-search-close" id="vs-image-search-close">&times;</button>
+      </div>
+      <div class="vs-image-search-modal-body">
+        <div class="vs-image-search-upload-area" id="vs-image-search-upload-area">
+          <div class="vs-image-search-upload-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <p>Drag and drop your image here, click "Upload Image," or paste the image here</p>
+          <button class="vs-image-search-upload-button" id="vs-image-search-upload-button">Upload Image</button>
+          <input type="file" id="vs-image-search-file-input" accept="image/*" style="display: none;">
+        </div>
+        
+        <!-- Add loading indicator -->
+        <div class="vs-image-search-loading" id="vs-image-search-loading" style="display: none;">
+          <div class="vs-image-search-spinner"></div>
+          <p>Searching for similar products...</p>
+        </div>
+        
+        <!-- Add results container -->
+        <div class="vs-image-search-results" id="vs-image-search-results" style="display: none;">
+          <h3>Similar Products</h3>
+          <div class="vs-image-search-results-grid" id="vs-image-search-results-grid">
+            <!-- Results will be dynamically added here -->
+          </div>
+        </div>
+        
+        <!-- Add error message container -->
+        <div class="vs-image-search-error" id="vs-image-search-error" style="display: none;">
+          <p>Error searching for products. Please try again.</p>
+        </div>
+        
+        <div class="vs-image-search-popular">
+          <h3>Popular Search Product Images</h3>
+          <div class="vs-image-search-popular-grid">
+            <!-- Popular product images would be dynamically loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Existing styles would be here */
+  
+  /* Add styles for results grid */
+  .vs-image-search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .vs-image-search-product-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .vs-image-search-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .vs-image-search-product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .vs-image-search-product-info {
+    padding: 15px;
+  }
+  
+  .vs-image-search-product-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+  
+  .vs-image-search-product-score {
+    display: inline-block;
+    background-color: #e3f1df;
+    color: #414f3e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .vs-image-search-product-type {
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .vs-image-search-product-description {
+    font-size: 14px;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Loading spinner */
+  .vs-image-search-loading {
+    text-align: center;
+    padding: 30px;
+  }
+  
+  .vs-image-search-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: vs-spin 2s linear infinite;
+    margin: 0 auto 15px;
+  }
+  
+  @keyframes vs-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Error message */
+  .vs-image-search-error {
+    text-align: center;
+    padding: 20px;
+    color: #d9534f;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const button = document.getElementById('vs-image-search-button');
+    const modal = document.getElementById('vs-image-search-modal');
+    const closeButton = document.getElementById('vs-image-search-close');
+    const uploadButton = document.getElementById('vs-image-search-upload-button');
+    const fileInput = document.getElementById('vs-image-search-file-input');
+    const uploadArea = document.getElementById('vs-image-search-upload-area');
+    const loadingElement = document.getElementById('vs-image-search-loading');
+    const resultsElement = document.getElementById('vs-image-search-results');
+    const resultsGrid = document.getElementById('vs-image-search-results-grid');
+    const errorElement = document.getElementById('vs-image-search-error');
+    
+    // Open modal when button is clicked
+    button.addEventListener('click', function() {
+      modal.style.display = 'flex';
+    });
+
+    // Close modal when close button is clicked
+    closeButton.addEventListener('click', function() {
+      modal.style.display = 'none';
+      // Reset the search results when closing
+      resultsElement.style.display = 'none';
+      errorElement.style.display = 'none';
+      resultsGrid.innerHTML = '';
+    });
+
+    // Close modal when clicking outside the modal content
+    modal.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+        // Reset the search results when closing
+        resultsElement.style.display = 'none';
+        errorElement.style.display = 'none';
+        resultsGrid.innerHTML = '';
+      }
+    });
+
+    // Trigger file input when upload button is clicked
+    uploadButton.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    // Function to process the image and send to API
+    function processImage(file) {
+      // Show loading indicator
+      loadingElement.style.display = 'block';
+      resultsElement.style.display = 'none';
+      errorElement.style.display = 'none';
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append('image', file);
+
+      console.log("formData", formData)
+      
+      // Send to API endpoint
+      fetch('https://synasisio.myshopify.com/apps/api/image-searcher', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())   
+      .then(data => {  
+        // Hide loading indicator
+        console.log("data", data)
+        loadingElement.style.display = 'none';
+         
+        if (data.error) {
+          // Show error message 
+          errorElement.style.display = 'block';
+          errorElement.querySelector('p').textContent = data.error;
+        } else if (data.products && data.products.length > 0) {
+          // Display results
+          displayResults(data.products);
+        } else {
+          // No products found
+          errorElement.style.display = 'block';
+          errorElement.querySelector('p').textContent = 'No similar products found. Try uploading a different image.';
+        }
+      })
+      .catch(error => {
+        // Hide loading indicator and show error
+        loadingElement.style.display = 'none';
+        errorElement.style.display = 'block';
+        errorElement.querySelector('p').textContent = 'Error connecting to server. Please try again.';
+        console.error('Error:', error);
+      });
+    }
+    
+    // Function to display results
+    function displayResults(products) {
+      // Clear previous results
+      resultsGrid.innerHTML = '';
+      
+      // Create product cards
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'vs-image-search-product-card';
+        
+        // Create product image
+        let imageHtml = '';
+        if (product.featuredImage && product.featuredImage.url) {
+          imageHtml = `<img src="${product.featuredImage.url}" alt="${product.title}" class="vs-image-search-product-image">`;
+        } else {
+          imageHtml = `<div class="vs-image-search-product-image" style="background-color: #f4f6f8;"></div>`;
+        }
+        
+        // Calculate match percentage
+        const matchPercentage = Math.min(100, Math.round(product.similarityScore * 2));
+        
+        // Create product info
+        card.innerHTML = `
+          ${imageHtml}
+          <div class="vs-image-search-product-info">
+            <div class="vs-image-search-product-title">${product.title}</div>
+            <div class="vs-image-search-product-score">Match: ${matchPercentage}%</div>
+            ${product.productType ? `<div class="vs-image-search-product-type">${product.productType}</div>` : ''}
+            <div class="vs-image-search-product-description">
+              ${product.description ? product.description.substring(0, 100) + (product.description.length > 100 ? '...' : '') : 'No description available'}
+            </div>
+          </div>
+        `;
+        
+        // Add click event to navigate to product
+        card.addEventListener('click', function() {
+          // Extract the product ID and convert to a handle format if needed
+          const productId = product.id;
+          // Navigate to product page - this assumes the ID contains the handle or can be converted to a URL
+          // You might need to adjust this based on your Shopify store's URL structure
+          window.location.href = `/products/${productId.split('/').pop()}`;
+        });
+        
+        // Add to results grid
+        resultsGrid.appendChild(card);
+      });
+      
+      // Show results container
+      resultsElement.style.display = 'block';
+    }
+
+    // Handle file selection
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        processImage(this.files[0]);
+      }
+    });
+
+    // Handle drag and drop 
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#4a4a4a';
+    });
+
+    uploadArea.addEventListener('dragleave', function() {
+      uploadArea.style.borderColor = '#ccc';
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#ccc';
+      
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processImage(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Handle paste events for the entire document
+    document.addEventListener('paste', function(e) {
+      if (modal.style.display === 'flex') {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            const blob = items[i].getAsFile();
+            processImage(blob);
+            break;
+          }
+        }
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Image Search Float",
+  "target": "body",
+  "stylesheet": "float-image.css",
+  "settings": [
+    {  
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_icon_color",
+      "label": "Button Icon Color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "button_position",
+      "label": "Button Position",
+      "options": [
+        {
+          "value": "bottom_right",
+          "label": "Bottom Right"
+        },
+        {
+          "value": "bottom_left",
+          "label": "Bottom Left"
+        },
+        {
+          "value": "top_right",
+          "label": "Top Right"
+        },
+        {
+          "value": "top_left",
+          "label": "Top Left"
+        }
+      ],
+      "default": "bottom_right"
+    }
+  ]
+}
+{% endschema %}

@@ -90,95 +90,85 @@ async function findSimilarProducts(base64Image, admin) {
 
 // Extract features from the uploaded image
 async function extractImageFeatures(base64Image) {
-  // Your PAT (Personal Access Token) can be found in the Account's Security section
-  const PAT = "879659753fb246799555f897a3e855ed";
-  // Specify the correct user_id/app_id pairings
-  // Since you're making inferences outside your app's scope
-  const USER_ID = "ereh000";
-  const APP_ID = "elrik0084";
-  // Change these to whatever model and image URL you want to use
-  // Change these to whatever model and text URL you want to use
-  const MODEL_ID = "gpt-4o";
-  const MODEL_VERSION_ID = "1cd39c6a109f4f0e94f1ac3fe233c207";
-  const IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
-  // const IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
+  // try {
+  // Google Cloud Vision API key
+  const API_KEY = "AIzaSyAK7XRRKW1lb6FfGXfwml6kGVXvT1W1FmE";
 
-  // Create a specific prompt asking for structured data
-  const prompt =
-    'Analyze this image and provide a JSON response with the following structure: {"labels": [list of keywords describing the image content], "colors": [list of dominant colors in hex code format], "objects": [list of distinct objects visible in the image]}. Be specific and concise.';
-
-  const raw = JSON.stringify({
-    user_app_id: {
-      user_id: USER_ID,
-      app_id: APP_ID,
-    },
-    inputs: [
+  // Prepare the request body for Google Cloud Vision API
+  const requestBody = {
+    requests: [
       {
-        data: {
-          image: {
-            base64: base64Image,
-          },
-          text: {
-            raw: prompt,
-          },
+        image: {
+          content: base64Image,
         },
+        features: [
+          { type: "LABEL_DETECTION", maxResults: 20 },
+          { type: "IMAGE_PROPERTIES", maxResults: 10 },
+          { type: "OBJECT_LOCALIZATION", maxResults: 10 },
+        ],
       },
     ],
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      Authorization: "Key " + PAT,
-    },
-    body: raw,
   };
 
+  // Make the API request
   const response = await fetch(
-    "https://api.clarifai.com/v2/models/" +
-      MODEL_ID +
-      "/versions/" +
-      MODEL_VERSION_ID +
-      "/outputs",
-    requestOptions,
+    `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    },
   );
+
   const result = await response.json();
-  console.log("result: ", result);
-  console.log("resultdata: ", result?.outputs[0]?.data);
+  console.log("Vision API result:", result);
 
-  // Extract the text response
-  const textResponse = result?.outputs[0]?.data?.text?.raw || "";
-
-  // Try to parse JSON from the response
+  // Extract the relevant data from the response
   try {
-    // Look for JSON-like structure in the response
-    const jsonMatch = textResponse?.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const jsonStr = jsonMatch[0];
-      const parsedData = JSON.parse(jsonStr);
-      console.log("parsedData: ", parsedData);
-
-      // Validate and return the parsed data
-      return {
-        labels: Array.isArray(parsedData?.labels) ? parsedData?.labels : [],
-        colors: Array.isArray(parsedData?.colors)
-          ? parsedData?.colors
-          : ["#e3e3e3"],
-        objects: Array.isArray(parsedData?.objects) ? parsedData?.objects : [],
-        rawDescription: textResponse || "",
-      };
+    if (!result.responses || !result.responses[0]) {
+      throw new Error("Invalid response from Vision API");
     }
 
-    // If JSON parsing fails, fall back to your existing text processing logic
-    // ... existing text processing code ...
+    const visionResponse = result.responses[0];
+
+    // Extract labels
+    const labels = visionResponse.labelAnnotations
+      ? visionResponse.labelAnnotations.map((label) =>
+          label.description.toLowerCase(),
+        )
+      : [];
+    console.log("Labels:", labels);
+
+    // Extract colors
+    const colors = visionResponse.imagePropertiesAnnotation
+      ? visionResponse.imagePropertiesAnnotation.dominantColors.colors.map(
+          (color) => {
+            const r = Math.round(color.color.red || 0);
+            const g = Math.round(color.color.green || 0);
+            const b = Math.round(color.color.blue || 0);
+            return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+          },
+        )
+      : ["#e3e3e3"];
+    console.log("Colors:", colors);
+
+    // Extract objects
+    const objects = visionResponse.localizedObjectAnnotations
+      ? visionResponse.localizedObjectAnnotations.map((obj) =>
+          obj.name.toLowerCase(),
+        )
+      : [];
+    console.log("Objects:", objects);
 
     // For now, return placeholder data
-    // return {
-    //   labels: ["clothing", "apparel", "shirt", "fashion", "blue", "cotton"],
-    //   colors: ["#2a4d69", "#4b86b4", "#adcbe3", "#e7eff6"],
-    //   objects: ["shirt", "button", "collar"],
-    // };
+    return {
+      labels,
+      colors,
+      objects,
+      rawDescription: JSON.stringify(visionResponse),
+    };
   } catch (error) {
     console.error("Error:", error);
     return json({ error: "Failed to fetch data" }, { status: 500 });
@@ -187,61 +177,95 @@ async function extractImageFeatures(base64Image) {
 
 // Rank products based on similarity to the uploaded image
 function rankProductsBySimilarity(products, imageFeatures) {
-  return (
-    products
-      .map((product) => {
-        // Calculate similarity score based on product attributes and image features
-        let score = 0;
+  return products
+    .map((product) => {
+      let score = 0;
+      const productText = (
+        product.title +
+        " " +
+        (product.description || "")
+      ).toLowerCase();
 
-        // Check product title and description for matching keywords
-        const productText = (
-          product.title +
-          " " +
-          (product.description || "")
-        ).toLowerCase();
-        imageFeatures.labels.forEach((label) => {
-          if (productText.includes(label.toLowerCase())) {
-            score += 10; // Higher weight for label matches
+      // 1. Color matching (highest priority)
+      if (imageFeatures.colors && imageFeatures.colors.length > 0) {
+        imageFeatures.colors.forEach((color, index) => {
+          // Give higher weight to dominant colors (earlier in the array)
+          const colorWeight = 25 - (index * 2);
+          if (productText.includes(color.replace("#", "")) || 
+              productText.includes(getColorName(color))) {
+            score += colorWeight;
           }
         });
+      }
 
-        // Check product tags for matches
+      // 2. Label matching (medium priority)
+      imageFeatures.labels.forEach((label) => {
+        if (productText.includes(label.toLowerCase())) {
+          score += 15;
+        }
+        // Check product tags for label matches
         if (product.tags) {
           const tags = Array.isArray(product.tags)
             ? product.tags
             : product.tags.split(",");
-          tags.forEach((tag) => {
-            if (
-              imageFeatures.labels.some((label) =>
-                tag.toLowerCase().includes(label.toLowerCase()),
-              )
-            ) {
-              score += 15; // Higher weight for tag matches
-            }
-          });
+          if (tags.some(tag => tag.toLowerCase().includes(label.toLowerCase()))) {
+            score += 10;
+          }
         }
-
-        // Check product type
-        if (
-          product.productType &&
-          imageFeatures.labels.some((label) =>
-            product.productType.toLowerCase().includes(label.toLowerCase()),
-          )
-        ) {
-          score += 20; // Higher weight for product type matches
+        // Check product type for label matches
+        if (product.productType && 
+            product.productType.toLowerCase().includes(label.toLowerCase())) {
+          score += 10;
         }
+      });
 
-        // Add the score to the product object
-        return {
-          ...product,
-          similarityScore: score,
-        };
-      })
-      // Sort by similarity score (highest first)
-      .sort((a, b) => b.similarityScore - a.similarityScore)
-      // Filter out products with zero similarity
-      .filter((product) => product.similarityScore > 0)
-  );
+      // 3. Object matching (lowest priority)
+      imageFeatures.objects.forEach((object) => {
+        if (productText.includes(object.toLowerCase())) {
+          score += 5;
+        }
+        // Check product tags for object matches
+        if (product.tags) {
+          const tags = Array.isArray(product.tags)
+            ? product.tags
+            : product.tags.split(",");
+          if (tags.some(tag => tag.toLowerCase().includes(object.toLowerCase()))) {
+            score += 3;
+          }
+        }
+      });
+
+      return {
+        ...product,
+        similarityScore: score,
+      };
+    })
+    .sort((a, b) => b.similarityScore - a.similarityScore)
+    .filter((product) => product.similarityScore > 0);
+}
+
+// Helper function to get basic color names from hex codes
+function getColorName(hex) {
+  // Remove the hash if present
+  hex = hex.replace("#", "");
+  
+  // Convert hex to RGB
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Simple color name mapping based on RGB values
+  if (r > 200 && g > 200 && b > 200) return "white";
+  if (r < 50 && g < 50 && b < 50) return "black";
+  if (r > 200 && g < 100 && b < 100) return "red";
+  if (r < 100 && g > 200 && b < 100) return "green";
+  if (r < 100 && g < 100 && b > 200) return "blue";
+  if (r > 200 && g > 200 && b < 100) return "yellow";
+  if (r > 200 && g < 100 && b > 200) return "purple";
+  if (r < 100 && g > 200 && b > 200) return "cyan";
+  if (r > 200 && g > 100 && b < 100) return "orange";
+  if (r > 150 && g > 100 && b > 100) return "brown";
+  return "gray";
 }
 
 export default function ImageSearcher() {
@@ -249,6 +273,7 @@ export default function ImageSearcher() {
   const [loading, setLoading] = useState(false);
   const actionData = useActionData();
   const submit = useSubmit();
+  console.log("actionData products:", actionData)
 
   const handleDropZoneDrop = (_dropFiles, acceptedFiles, _rejectedFiles) => {
     setFile(acceptedFiles[0]);

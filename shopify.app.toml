@@ -3,23 +3,11 @@
 client_id = "400fdce51287067c5f56249c70a1d23e"
 name = "Visual Search"
 handle = "visual-search-9"
-application_url = "https://occasionally-first-formatting-allergy.trycloudflare.com"
+application_url = "https://presented-cordless-browse-nicaragua.trycloudflare.com"
 embedded = true
-
-[build]
-automatically_update_urls_on_dev = true
-include_config_on_deploy = true
 
 [webhooks]
 api_version = "2025-04"
-
-  [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
-
-  [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled" ]
-  uri = "/webhooks/app/uninstalled"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -27,10 +15,14 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://occasionally-first-formatting-allergy.trycloudflare.com/auth/callback",
-  "https://occasionally-first-formatting-allergy.trycloudflare.com/auth/shopify/callback",
-  "https://occasionally-first-formatting-allergy.trycloudflare.com/api/auth/callback"
+  "https://presented-cordless-browse-nicaragua.trycloudflare.com/auth/callback",
+  "https://presented-cordless-browse-nicaragua.trycloudflare.com/auth/shopify/callback",
+  "https://presented-cordless-browse-nicaragua.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
 embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
