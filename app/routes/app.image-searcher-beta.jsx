@@ -80,6 +80,7 @@ async function findSimilarProducts(base64Image, admin) {
 
   const productsData = await productsResponse.json();
   const products = productsData.data.products.edges.map(({ node }) => node);
+  console.log("Products:", products);
 
   // 3. Filter and rank products based on similarity
   const rankedProducts = rankProductsBySimilarity(products, imageFeatures);
