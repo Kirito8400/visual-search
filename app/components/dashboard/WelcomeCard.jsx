@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Card, Page, Text } from "@shopify/polaris";
+import { CheckCircleIcon } from "@shopify/polaris-icons";
 
-export function WelcomeCard() {
+export function WelcomeCard({ redirectToThemeEditor, redirectToPlan }) {
   const [openStep, setOpenStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState(0);
 
@@ -96,24 +97,20 @@ export function WelcomeCard() {
                 justifyContent: "center",
               }}
             >
-              {completedSteps >= 1 ? (
-                <svg
-                  viewBox="0 0 20 20"
-                  style={{ width: "20px", height: "20px", fill: "#008060" }}
-                >
-                  <path d="M10 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm0-15c-3.86 0-7 3.14-7 7s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm3.293 5.707-4.586 4.586-2-2 .707-.707 1.293 1.293 3.879-3.879.707.707z" />
-                </svg>
-              ) : (
-                <svg
-                  viewBox="0 0 20 20"
-                  style={{ width: "20px", height: "20px", fill: "#5c5f62" }}
-                >
-                  <path
-                    d="M10 14.293l5.293-5.293.707.707-6 6-6-6 .707-.707 5.293 5.293zm0-8.586l-5.293 5.293-.707-.707 6-6 6 6-.707.707-5.293-5.293z"
-                    transform={openStep === 1 ? "rotate(180 10 10)" : ""}
-                  />
-                </svg>
-              )}
+              {/* {completedSteps >= 0 ? ( */}
+              <div
+                class="_unfinished-circle_y0zy0_246"
+                bis_size='{"x":211,"y":352,"w":20,"h":20,"abs_x":451,"abs_y":464}'
+                style={{
+                  border: "2px dashed #616161",
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                }}
+              ></div>
+              {/* ) : (
+                <CheckCircleIcon />
+              )} */}
             </div>
             <Text variant="headingSm">
               Step 1: New product image processing
@@ -165,24 +162,20 @@ export function WelcomeCard() {
                 justifyContent: "center",
               }}
             >
-              {completedSteps >= 2 ? (
-                <svg
-                  viewBox="0 0 20 20"
-                  style={{ width: "20px", height: "20px", fill: "#008060" }}
-                >
-                  <path d="M10 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm0-15c-3.86 0-7 3.14-7 7s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm3.293 5.707-4.586 4.586-2-2 .707-.707 1.293 1.293 3.879-3.879.707.707z" />
-                </svg>
-              ) : (
-                <svg
-                  viewBox="0 0 20 20"
-                  style={{ width: "20px", height: "20px", fill: "#5c5f62" }}
-                >
-                  <path
-                    d="M10 14.293l5.293-5.293.707.707-6 6-6-6 .707-.707 5.293 5.293zm0-8.586l-5.293 5.293-.707-.707 6-6 6 6-.707.707-5.293-5.293z"
-                    transform={openStep === 2 ? "rotate(180 10 10)" : ""}
-                  />
-                </svg>
-              )}
+              {/* {completedSteps >= 1 ? ( */}
+              <div
+                class="_unfinished-circle_y0zy0_246"
+                bis_size='{"x":211,"y":352,"w":20,"h":20,"abs_x":451,"abs_y":464}'
+                style={{
+                  border: "2px dashed #616161",
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                }}
+              ></div>
+              {/* ) : (
+                <CheckCircleIcon />
+              )} */}
             </div>
 
             <Text variant="headingSm">
@@ -231,7 +224,7 @@ export function WelcomeCard() {
                     </Text>
 
                     <div>
-                      <Button variant="primary">Open theme editor</Button>
+                      <Button variant="primary" onClick={redirectToThemeEditor}>Open theme editor</Button>
                     </div>
                   </div>
                 </div>
@@ -273,24 +266,20 @@ export function WelcomeCard() {
                 justifyContent: "center",
               }}
             >
-              {completedSteps >= 3 ? (
-                <svg
-                  viewBox="0 0 20 20"
-                  style={{ width: "20px", height: "20px", fill: "#008060" }}
-                >
-                  <path d="M10 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm0-15c-3.86 0-7 3.14-7 7s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm3.293 5.707-4.586 4.586-2-2 .707-.707 1.293 1.293 3.879-3.879.707.707z" />
-                </svg>
-              ) : (
-                <svg
-                  viewBox="0 0 20 20"
-                  style={{ width: "20px", height: "20px", fill: "#5c5f62" }}
-                >
-                  <path
-                    d="M10 14.293l5.293-5.293.707.707-6 6-6-6 .707-.707 5.293 5.293zm0-8.586l-5.293 5.293-.707-.707 6-6 6 6-.707.707-5.293-5.293z"
-                    transform={openStep === 3 ? "rotate(180 10 10)" : ""}
-                  />
-                </svg>
-              )}
+              {/* {completedSteps >= 2 ? ( */}
+              <div
+                class="_unfinished-circle_y0zy0_246"
+                bis_size='{"x":211,"y":352,"w":20,"h":20,"abs_x":451,"abs_y":464}'
+                style={{
+                  border: "2px dashed #616161",
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                }}
+              ></div>
+              {/* ) : (
+                <CheckCircleIcon />
+              )} */}
             </div>
             <Text variant="headingSm">Step : New product image processing</Text>
           </div>
@@ -312,7 +301,7 @@ export function WelcomeCard() {
               </Text>
 
               <div style={{ marginTop: "10px" }}>
-                <Button variant="primary">Choose a plan</Button>
+                <Button variant="primary" url="/app/plan">Choose a plan</Button>
               </div>
             </div>
           )}

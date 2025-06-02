@@ -3,7 +3,7 @@
 client_id = "400fdce51287067c5f56249c70a1d23e"
 name = "Visual Search"
 handle = "visual-search-9"
-application_url = "https://presented-cordless-browse-nicaragua.trycloudflare.com"
+application_url = "https://responsibilities-dedicated-pledge-graphical.trycloudflare.com"
 embedded = true
 
 [webhooks]
@@ -15,9 +15,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://presented-cordless-browse-nicaragua.trycloudflare.com/auth/callback",
-  "https://presented-cordless-browse-nicaragua.trycloudflare.com/auth/shopify/callback",
-  "https://presented-cordless-browse-nicaragua.trycloudflare.com/api/auth/callback"
+  "https://responsibilities-dedicated-pledge-graphical.trycloudflare.com/auth/callback",
+  "https://responsibilities-dedicated-pledge-graphical.trycloudflare.com/auth/shopify/callback",
+  "https://responsibilities-dedicated-pledge-graphical.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

@@ -77,7 +77,7 @@ async function findSimilarProducts(base64Image, admin) {
 async function extractImageFeatures(base64Image) {
   // try {
   // Google Cloud Vision API key
-  const API_KEY = "AIzaSyAK7XRRKW1lb6FfGXfwml6kGVXvT1W1FmE";
+  const API_KEY = process.env.API_KEY || "";
 
   // Prepare the request body for Google Cloud Vision API
   const requestBody = {

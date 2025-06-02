@@ -51,6 +51,16 @@ export function CurrentPlan() {
 }
 
 export function ProductStatus() {
+  const resourcePicker = () => {
+    shopify.resourcePicker({
+      type: 'product', filter: {
+        hidden: false,
+        variants: false,
+        draft: false,
+        archived: false,
+      },
+    })
+  }
   return (
     <Card>
       <BlockStack gap="200">
@@ -61,7 +71,7 @@ export function ProductStatus() {
           Used 4 items / In progress 0 items
         </Text>
         <div>
-          <Button variant="primary">
+          <Button variant="primary" onClick={resourcePicker}>
             Select products to use Visual Search
           </Button>
         </div>
