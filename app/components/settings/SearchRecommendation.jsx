@@ -10,17 +10,34 @@ import {
 } from "@shopify/polaris";
 
 // Search recommendations settings section
-export default function SearchRecommendationsSettings() {
-  const [searchRecommendations, setSearchRecommendations] = useState(true);
-  const [customHotKeywords, setCustomHotKeywords] = useState(false);
-  const [customHotCollections, setCustomHotCollections] = useState(false);
-  const [keywordMenu, setKeywordMenu] = useState("main_menu");
-  const [collectionMenu, setCollectionMenu] = useState("main_menu");
-  const [samplingInterval, setSamplingInterval] = useState("7");
-  const [showKeywordRecommendations, setShowKeywordRecommendations] =
-    useState(true);
-  const [showCollectionRecommendations, setShowCollectionRecommendations] =
-    useState(true);
+export default function SearchRecommendationsSettings({ 
+  searchRecommendations,
+  setSearchRecommendations,
+  customHotKeywords,
+  setCustomHotKeywords,
+  customHotCollections,
+  setCustomHotCollections,
+  keywordMenu,
+  setKeywordMenu,
+  collectionMenu,
+  setCollectionMenu,
+  samplingInterval,
+  setSamplingInterval,
+  showKeywordRecommendations,
+  setShowKeywordRecommendations,
+  showCollectionRecommendations,
+  setShowCollectionRecommendations,
+}) {
+  // const [searchRecommendations, setSearchRecommendations] = useState(true);
+  // const [customHotKeywords, setCustomHotKeywords] = useState(false);
+  // const [customHotCollections, setCustomHotCollections] = useState(false);
+  // const [keywordMenu, setKeywordMenu] = useState("main_menu");
+  // const [collectionMenu, setCollectionMenu] = useState("main_menu");
+  // const [samplingInterval, setSamplingInterval] = useState("7");
+  // const [showKeywordRecommendations, setShowKeywordRecommendations] =
+  //   useState(true);
+  // const [showCollectionRecommendations, setShowCollectionRecommendations] =
+  //   useState(true);
 
   const menuOptions = [{ label: "Main menu", value: "main_menu" }];
 

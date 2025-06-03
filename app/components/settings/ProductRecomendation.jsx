@@ -7,12 +7,23 @@ import {
   LegacyCard,
 } from "@shopify/polaris";
 
-export default function ProductRecommendation() {
-  const [productRecommendations, setProductRecommendations] = useState(true);
-  const [showImageSearchButton, setShowImageSearchButton] = useState(true);
-  const [showAddToCartButton, setShowAddToCartButton] = useState(true);
-  const [displayCollectionInfo, setDisplayCollectionInfo] = useState(false);
-  const [cacheTime, setCacheTime] = useState("1");
+export default function ProductRecommendation({
+  productRecommendations,
+  setProductRecommendations,
+  showImageSearchButton,
+  setShowImageSearchButton,
+  showAddToCartButton,
+  setShowAddToCartButton,
+  displayCollectionInfo,
+  setDisplayCollectionInfo,
+  cacheTime,
+  setCacheTime,
+}) {
+  // const [productRecommendations, setProductRecommendations] = useState(true);
+  // const [showImageSearchButton, setShowImageSearchButton] = useState(true);
+  // const [showAddToCartButton, setShowAddToCartButton] = useState(true);
+  // const [displayCollectionInfo, setDisplayCollectionInfo] = useState(false);
+  // const [cacheTime, setCacheTime] = useState("1");
 
   const handleProductRecommendationsChange = () => {
     setProductRecommendations(!productRecommendations);

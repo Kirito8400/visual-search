@@ -8,9 +8,7 @@ import {
   LegacyCard,
 } from "@shopify/polaris";
 
-export default function AllSettings() {
-  const [hideOutOfStock, setHideOutOfStock] = useState(false);
-  const [selectorStyle, setSelectorStyle] = useState("button");
+export default function AllSettings({hideOutOfStock, setHideOutOfStock, selectorStyle, setSelectorStyle }) {
 
   const handleHideOutOfStockChange = () => {
     setHideOutOfStock(!hideOutOfStock);

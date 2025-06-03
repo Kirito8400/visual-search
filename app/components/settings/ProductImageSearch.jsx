@@ -9,14 +9,29 @@ import {
   BlockStack,
 } from "@shopify/polaris";
 
-export default function ProductImageSearch() {
-  const [productImageSearch, setProductImageSearch] = useState(true);
-  const [dragImageFeature, setDragImageFeature] = useState(true);
-  const [useStandalonePage, setUseStandalonePage] = useState(false);
-  const [openInNewTab, setOpenInNewTab] = useState(false);
-  const [showImageSearchButton, setShowImageSearchButton] = useState(true);
-  const [showAddToCartButton, setShowAddToCartButton] = useState(true);
-  const [displayCollectionInfo, setDisplayCollectionInfo] = useState(false);
+export default function ProductImageSearch({ 
+  productImageSearch,
+  setProductImageSearch,
+  dragImageFeature,
+  setDragImageFeature,
+  useStandalonePage,
+  setUseStandalonePage,
+  openInNewTab,
+  setOpenInNewTab,
+  showImageSearchButton,
+  setShowImageSearchButton,
+  showAddToCartButton,
+  setShowAddToCartButton,
+  displayCollectionInfo,
+  setDisplayCollectionInfo,
+ }) {
+  // const [productImageSearch, setProductImageSearch] = useState(true);
+  // const [dragImageFeature, setDragImageFeature] = useState(true);
+  // const [useStandalonePage, setUseStandalonePage] = useState(false);
+  // const [openInNewTab, setOpenInNewTab] = useState(false);
+  // const [showImageSearchButton, setShowImageSearchButton] = useState(true);
+  // const [showAddToCartButton, setShowAddToCartButton] = useState(true);
+  // const [displayCollectionInfo, setDisplayCollectionInfo] = useState(false);
 
   const handleProductImageSearchChange = () => {
     setProductImageSearch(!productImageSearch);

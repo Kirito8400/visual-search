@@ -80,7 +80,7 @@ async function findSimilarProducts(base64Image, admin) {
 
   const productsData = await productsResponse.json();
   const products = productsData.data.products.edges.map(({ node }) => node);
-  console.log("Products:", products);
+  // console.log("Products:", products);
 
   // 3. Filter and rank products based on similarity
   const rankedProducts = rankProductsBySimilarity(products, imageFeatures);
@@ -94,6 +94,7 @@ async function extractImageFeatures(base64Image) {
   // try {
   // Google Cloud Vision API key
   const API_KEY = process.env.API_KEY || "";
+  // const API_KEY = "ff2504abb76947a3cb5b8ce0e3b3b5eca1bbfd02";
 
   // Prepare the request body for Google Cloud Vision API
   const requestBody = {
