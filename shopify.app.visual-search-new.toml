@@ -6,6 +6,9 @@ name = "visual-search-new"
 application_url = "https://example.com"
 embedded = true
 
+[build]
+automatically_update_urls_on_dev = true
+
 [webhooks]
 api_version = "2025-07"
 
@@ -15,6 +18,3 @@ scopes = "read_themes,write_products"
 
 [auth]
 redirect_urls = [ "https://example.com/api/auth" ]
-
-[build]
-automatically_update_urls_on_dev = true

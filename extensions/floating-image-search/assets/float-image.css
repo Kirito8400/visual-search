@@ -56,7 +56,7 @@
 
 .vs-image-search-modal-content {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 4px;
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
@@ -74,7 +74,10 @@
 
 .vs-image-search-modal-header h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 18px;
+  font-weight: 500;
+  /* text-transform: uppercase; */
+  font-family: "Nunito" !important;
 }
 
 .vs-image-search-close {
@@ -87,6 +90,7 @@
 
 .vs-image-search-modal-body {
   padding: 20px;
+  background: #eeeeee8f;
 }
 
 .vs-image-search-upload-area {
@@ -94,11 +98,17 @@
   border-radius: 8px;
   padding: 30px;
   text-align: center;
+  background: #fff;
   margin-bottom: 20px;
 }
 
 .vs-image-search-upload-icon {
   margin-bottom: 15px;
+}
+.vs-image-search-upload-icon svg {
+  width: 30px;
+  height: auto;
+  margin-bottom: -10px;
 }
 
 .vs-image-search-upload-button {
@@ -108,7 +118,7 @@
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 15px;
+  /* margin-top: 15px; */
   font-size: 16px;
 }
 
@@ -119,14 +129,25 @@
 
 .vs-image-search-popular-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 10px;
 }
 
 .vs-image-search-popular-grid img {
   width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
   border: 1px solid #eee;
+}
+
+.vs-image-search-popular {
+  padding-top: 10px;
+}
+.vs-image-search-float .vs-sg-product-image {
+  margin: 0 !important;
+}
+.vs-sg-product-image img {
+  aspect-ratio: 2 / 2.4 !important;
+  object-fit: cover;
 }
